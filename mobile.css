@@ -12,28 +12,35 @@
   .menu-btn svg{width:18px;height:18px;color:#f69269}
   .menu-btn:focus-visible,.drawer-head button:focus-visible,.mobile-drawer a:focus-visible{outline:2px solid #ff9469;outline-offset:3px}
 
-  /* A short bottom sheet keeps the destinations close to the user's thumb. */
-  .drawer-backdrop{background:rgba(5,6,8,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-  .mobile-drawer{top:auto;right:0;bottom:0;left:0;width:100%;height:auto;max-height:calc(100vh - 12px);max-height:calc(100dvh - 12px);overflow-y:auto;overscroll-behavior:contain;padding:0 0 max(14px,env(safe-area-inset-bottom));border:1px solid rgba(255,255,255,.1);border-bottom:0;border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;background:#17181c;box-shadow:0 -20px 70px rgba(0,0,0,.42);transform:translateY(105%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.75,.25,1),visibility 0s linear .28s;backdrop-filter:none}
-  .drawer-open .mobile-drawer{transform:translateY(0);visibility:visible;transition:transform .28s cubic-bezier(.2,.75,.25,1),visibility 0s}
-  .drawer-grip{width:38px;height:4px;margin:11px auto 0;border-radius:99px;background:#55545a}
-  .drawer-head{height:auto;min-height:76px;align-items:center;padding:12px 20px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+  /* The menu unrolls from the header rail like a curtain, top to bottom. */
+  .drawer-stage{display:block;top:var(--header-h,65px);right:0;bottom:0;left:0}
+  .drawer-backdrop{background:rgba(5,6,8,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+  .mobile-drawer{position:absolute;top:0;right:0;bottom:auto;left:0;width:100%;height:auto;max-height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 0 max(10px,env(safe-area-inset-bottom));border:1px solid rgba(255,255,255,.1);border-top:0;border-radius:0 0 var(--radius-sheet) var(--radius-sheet);background:linear-gradient(180deg,#1f2024,#17181c 58%);box-shadow:0 26px 70px rgba(0,0,0,.5);transform:translateY(-101%);visibility:hidden;pointer-events:none;transition:transform .34s cubic-bezier(.16,.84,.3,1),visibility 0s linear .34s;backdrop-filter:none}
+  .drawer-open .mobile-drawer{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .34s cubic-bezier(.16,.84,.3,1),visibility 0s}
+  .drawer-grip{width:38px;height:4px;margin:10px auto 0;border-radius:99px;background:linear-gradient(90deg,#f87643,#ffb08a);opacity:.9}
+  .drawer-head{height:auto;min-height:62px;align-items:center;padding:9px 14px 11px;border-bottom:1px solid rgba(255,255,255,.07)}
   .drawer-title span{display:block;color:#ec906a;font-size:9px;font-weight:800;letter-spacing:.13em}
-  .drawer-title h2{margin:5px 0 0;color:#f8f7f4;font-size:23px;font-weight:800;line-height:1.15;letter-spacing:-.04em}
+  .drawer-title h2{margin:4px 0 0;color:#f8f7f4;font-size:19px;font-weight:800;line-height:1.15;letter-spacing:-.035em}
   .drawer-head button{width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-control);background:#242529;color:#f4f2ee;cursor:pointer}
-  .drawer-head button svg{width:19px;height:19px}
-  .mobile-drawer nav{display:grid;gap:8px;padding:16px 16px 12px}
-  .mobile-drawer nav a{min-height:68px;grid-template-columns:40px minmax(0,1fr) 18px;gap:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.075);border-radius:var(--radius-card);background:#202125;color:#f1efeb}
-  .mobile-drawer nav a[aria-current="page"]{border-color:rgba(248,118,67,.35);background:linear-gradient(90deg,rgba(248,118,67,.09),transparent 80%),#202125}
-  .drawer-link-icon{width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-mark);background:#292a2e;color:#f39770}
-  .mobile-drawer nav a .drawer-link-icon svg{width:18px;height:18px;color:#f39770}
-  .drawer-link-copy{display:grid;gap:3px;min-width:0}
-  .drawer-link-copy strong{color:#f4f3ef;font-size:13px;line-height:1.3}
-  .drawer-link-copy small{color:#aaa7a1;font-size:11px;font-weight:500;line-height:1.35}
-  .mobile-drawer nav a>svg:last-child{width:17px;height:17px;color:#8b8882}
-  .drawer-footer{display:flex;align-items:center;gap:9px;margin:5px 20px 0;padding:14px 0 2px;border-top:1px solid rgba(255,255,255,.07);color:#9f9c96;font-size:9px;font-weight:800;letter-spacing:.09em}
+  .drawer-head button svg{width:18px;height:18px}
+  .mobile-drawer nav{display:grid;gap:7px;padding:12px 14px 10px}
+  .mobile-drawer nav a{position:relative;min-height:52px;grid-template-columns:34px minmax(0,1fr) 15px;gap:11px;padding:8px 11px;border:1px solid rgba(255,255,255,.075);border-radius:var(--radius-card);background:#202125;color:#f1efeb}
+  .mobile-drawer nav a[aria-current="page"]{border-color:rgba(248,118,67,.35);background:linear-gradient(90deg,rgba(248,118,67,.1),transparent 78%),#202125}
+  .mobile-drawer nav a[aria-current="page"]:before{content:"";position:absolute;top:11px;bottom:11px;left:-1px;width:2px;border-radius:99px;background:var(--primary)}
+  .drawer-link-icon{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-mark);background:#292a2e;color:#f39770}
+  .mobile-drawer nav a .drawer-link-icon svg{width:16px;height:16px;color:#f39770}
+  .drawer-link-copy{display:grid;gap:2px;min-width:0}
+  .drawer-link-copy strong{color:#f4f3ef;font-size:12.5px;line-height:1.3}
+  .drawer-link-copy small{color:#aaa7a1;font-size:10.5px;font-weight:500;line-height:1.35}
+  .mobile-drawer nav a>svg:last-child{width:15px;height:15px;color:#8b8882}
+  .drawer-footer{display:flex;align-items:center;gap:9px;margin:2px 14px 0;padding:11px 0 0;border-top:1px solid rgba(255,255,255,.07);color:#9f9c96;font-size:9px;font-weight:800;letter-spacing:.09em}
   .drawer-footer-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#f78e64}
-  .drawer-footer b{margin-left:auto;color:#f78e64;font-size:14px}
+  .drawer-footer b{margin-left:auto;color:#f78e64;font-size:13px}
+
+  /* Rows settle in behind the unrolling edge of the curtain. */
+  .drawer-open .mobile-drawer nav a{animation:curtainItem .3s cubic-bezier(.2,.75,.25,1) backwards}
+  .drawer-open .mobile-drawer nav a:nth-child(2){animation-delay:70ms}
+  .drawer-open .mobile-drawer nav a:nth-child(3){animation-delay:130ms}
 
   /* Put the actual tournaments before the explanatory steps on small screens. */
   .home-page{display:flex;flex-direction:column;padding-top:12px}
@@ -85,7 +92,14 @@
 @media(max-width:340px){
   .hero-actions .primary-btn,.hero-actions .secondary-btn{font-size:10px;padding:0 8px}
   .home-page .event-actions a{font-size:10px;padding:0 7px}
+  .mobile-drawer nav a{gap:9px;padding:8px 9px}
+  .drawer-link-copy small{font-size:10px}
+}
+@keyframes curtainItem{
+  from{opacity:0;transform:translateY(-9px)}
+  to{opacity:1;transform:none}
 }
 @media(prefers-reduced-motion:reduce){
   .mobile-drawer,.drawer-backdrop{transition:none}
+  .drawer-open .mobile-drawer nav a{animation:none}
 }

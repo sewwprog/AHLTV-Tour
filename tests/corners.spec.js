@@ -6,6 +6,7 @@ const supabaseMock=fs.readFileSync(path.join(__dirname,'fixtures/supabase-mock.j
 const iconNames=['Trophy','SendHorizontal','LogIn','Menu','X','UserRound','UserPlus','LogOut','Settings','Users','GitBranch','Globe2','ClipboardList','CalendarDays','Gamepad2','ExternalLink','Eye','EyeOff','Pencil','Trash2','Check','XCircle','Upload','Image','Save','Shield','CircleDot','Clock3','Swords','LayoutDashboard','ScrollText','ChevronRight','Plus','LockKeyhole','UserCheck','UserX','ListChecks','CircleUserRound','ArrowRight','BadgeCheck','CircleCheck','CircleX','ClipboardPlus','ImagePlus','Images','LoaderCircle','ShieldCheck','Type','Search'];
 const lucideMock='export function createIcons(){};'+iconNames.map(name=>`export const ${name}={};`).join('');
 const radius=locator=>locator.evaluate(el=>getComputedStyle(el).borderTopLeftRadius);
+const bottomRadius=locator=>locator.evaluate(el=>getComputedStyle(el).borderBottomLeftRadius);
 
 test('sharper corners stay consistent across pages and breakpoints without squaring circular accents',async({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
@@ -26,7 +27,9 @@ test('sharper corners stay consistent across pages and breakpoints without squar
     expect(dimensions.scroll,`${width}px`).toBeLessThanOrEqual(dimensions.width+1);
     if(width<=700){
       await page.locator('#menuBtn').click();
-      expect(await radius(page.locator('#mobileDrawer')),`${width}px sheet`).toBe('12px');
+      // The phone menu is a curtain hanging from the header rail: square on top, rounded below.
+      expect(await radius(page.locator('#mobileDrawer')),`${width}px sheet top`).toBe('0px');
+      expect(await bottomRadius(page.locator('#mobileDrawer')),`${width}px sheet bottom`).toBe('12px');
       expect(await radius(page.locator('#mobileDrawer nav a').first()),`${width}px menu item`).toBe('6px');
       expect(await radius(page.locator('#drawerClose')),`${width}px close`).toBe('4px');
       expect(await radius(page.locator('.drawer-grip')),`${width}px grip`).toBe('99px');
