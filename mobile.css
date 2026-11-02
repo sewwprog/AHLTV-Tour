@@ -15,10 +15,9 @@
   /* The menu unrolls from the header rail like a curtain, top to bottom. */
   .drawer-stage{display:block;top:var(--header-h,65px);right:0;bottom:0;left:0}
   .drawer-backdrop{background:rgba(5,6,8,.74);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
-  .mobile-drawer{position:absolute;top:0;right:0;bottom:auto;left:0;width:100%;height:auto;max-height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 0 max(10px,env(safe-area-inset-bottom));border:1px solid rgba(255,255,255,.1);border-top:0;border-radius:0 0 var(--radius-sheet) var(--radius-sheet);background:linear-gradient(180deg,#1f2024,#17181c 58%);box-shadow:0 26px 70px rgba(0,0,0,.5);transform:translateY(-101%);visibility:hidden;pointer-events:none;transition:transform .34s cubic-bezier(.16,.84,.3,1),visibility 0s linear .34s;backdrop-filter:none}
+  .mobile-drawer{position:absolute;top:0;right:0;bottom:auto;left:0;width:100%;height:auto;max-height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 0 max(10px,env(safe-area-inset-bottom));border:1px solid rgba(255,255,255,.1);border-top:0;border-radius:0 0 var(--radius-sheet) var(--radius-sheet);background:#191a1e;box-shadow:0 26px 70px rgba(0,0,0,.5);transform:translateY(-101%);visibility:hidden;pointer-events:none;transition:transform .34s cubic-bezier(.16,.84,.3,1),visibility 0s linear .34s;backdrop-filter:none}
   .drawer-open .mobile-drawer{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .34s cubic-bezier(.16,.84,.3,1),visibility 0s}
-  .drawer-grip{width:38px;height:4px;margin:10px auto 0;border-radius:99px;background:linear-gradient(90deg,#f87643,#ffb08a);opacity:.9}
-  .drawer-head{height:auto;min-height:62px;align-items:center;padding:9px 14px 11px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .drawer-head{height:auto;min-height:64px;align-items:center;padding:13px 14px 12px;border-bottom:1px solid rgba(255,255,255,.07)}
   .drawer-title span{display:block;color:#ec906a;font-size:9px;font-weight:800;letter-spacing:.13em}
   .drawer-title h2{margin:4px 0 0;color:#f8f7f4;font-size:19px;font-weight:800;line-height:1.15;letter-spacing:-.035em}
   .drawer-head button{width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-control);background:#242529;color:#f4f2ee;cursor:pointer}

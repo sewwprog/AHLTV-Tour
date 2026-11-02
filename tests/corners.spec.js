@@ -32,7 +32,6 @@ test('sharper corners stay consistent across pages and breakpoints without squar
       expect(await bottomRadius(page.locator('#mobileDrawer')),`${width}px sheet bottom`).toBe('12px');
       expect(await radius(page.locator('#mobileDrawer nav a').first()),`${width}px menu item`).toBe('6px');
       expect(await radius(page.locator('#drawerClose')),`${width}px close`).toBe('4px');
-      expect(await radius(page.locator('.drawer-grip')),`${width}px grip`).toBe('99px');
       expect((await page.locator('#drawerClose').boundingBox()).height).toBeGreaterThanOrEqual(44);
       await page.locator('#drawerClose').click();
     }
