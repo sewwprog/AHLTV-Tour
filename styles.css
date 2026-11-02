@@ -175,6 +175,18 @@ svg.lucide{
 }
 
 /* DRAWER */
+/* The stage clips the sheet, so on phones the curtain can unroll from under the header. */
+.drawer-stage{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:90;
+  display:none;
+  overflow:hidden;
+  pointer-events:none;
+}
 .drawer-backdrop{
   position:fixed;
   inset:0;
@@ -797,7 +809,7 @@ body.lightbox-open{overflow:hidden}
 
 /* DESKTOP GUARDS */
 @media(min-width:701px){
-  .mobile-drawer,.drawer-backdrop,.menu-btn{display:none!important}
+  .mobile-drawer,.drawer-backdrop,.menu-btn,.drawer-stage{display:none!important}
 }
 
 /* TABLET */

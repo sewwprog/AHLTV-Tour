@@ -58,6 +58,11 @@ test('mobile home and navigation work at phone, landscape and desktop sizes',asy
     await expect(drawer).toHaveAttribute('aria-hidden','false');
     await expect(button).toHaveAttribute('aria-expanded','true');
     await expect(drawer.locator('a[href="./"]')).toHaveAttribute('aria-current','page');
+    // The curtain unrolls from under the header rail instead of covering it.
+    const headerBox=await page.locator('.site-header').boundingBox();
+    const drawerBox=await drawer.boundingBox();
+    expect(Math.abs(drawerBox.y-(headerBox.y+headerBox.height))).toBeLessThanOrEqual(1);
+    expect(drawerBox.y+drawerBox.height).toBeLessThanOrEqual(845);
     for(const control of await drawer.locator('a, #drawerClose').all()){
       const box=await control.boundingBox();
       expect(box.width).toBeGreaterThanOrEqual(44);

@@ -212,13 +212,29 @@ const observer=new MutationObserver((mutations)=>{
 observer.observe(document.documentElement,{childList:true,subtree:true});
 
 const body=document.body;
+const siteHeader=document.querySelector(".site-header");
 const menuBtn=document.querySelector("#menuBtn");
 const drawer=document.querySelector("#mobileDrawer");
 const backdrop=document.querySelector("#drawerBackdrop");
 const closeBtn=document.querySelector("#drawerClose");
 
+/* The curtain hangs from the header rail, so it always starts exactly under it. */
+function syncHeaderOffset(){
+  if(!siteHeader)return;
+  const height=Math.round(siteHeader.getBoundingClientRect().height);
+  if(height>0)document.documentElement.style.setProperty("--header-h",height+"px");
+}
+let headerFrame=0;
+window.addEventListener("resize",()=>{
+  cancelAnimationFrame(headerFrame);
+  headerFrame=requestAnimationFrame(syncHeaderOffset);
+},{passive:true});
+window.addEventListener("load",syncHeaderOffset);
+syncHeaderOffset();
+
 function setDrawer(open){
   const wasOpen=body.classList.contains("drawer-open");
+  if(open)syncHeaderOffset();
   body.classList.toggle("drawer-open",open);
   drawer?.toggleAttribute("inert",!open);
   drawer?.setAttribute("aria-hidden",open?"false":"true");
