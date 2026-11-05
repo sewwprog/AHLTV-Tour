@@ -10,6 +10,15 @@
   <link rel="stylesheet" href="admin.css?v=20261027-02">
   <link rel="stylesheet" href="motion.css?v=20261027-01">
   <script defer src="i18n.js?v=20261105-03"></script>
+  <style>
+  .reservation-intro{margin:12px 0 20px;color:var(--muted);line-height:1.7}
+  .reservation-summary{margin:6px 0 14px;color:var(--muted);font-size:12px}
+  .reservation-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;margin:8px 0;background:rgba(255,255,255,.025)}
+  .reservation-row-main{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .reservation-row-main strong{font-size:13px;overflow-wrap:anywhere}
+  .reservation-row-main small{color:var(--muted)}
+  #reservationMessage.error{color:var(--danger)}#reservationMessage.success{color:var(--success)}
+  </style>
 </head>
 <body>
 <div class="site-intro" id="siteIntro" hidden aria-hidden="true">
@@ -93,6 +102,7 @@
           <button type="button" data-tab="tournamentsTab"><i data-lucide="trophy"></i><span>Турніри</span></button>
           <button type="button" data-tab="applicationsTab"><i data-lucide="clipboard-list"></i><span>Заявки</span><b id="pendingBadge"></b></button>
           <button type="button" data-tab="manualTeamsTab"><i data-lucide="user-plus"></i><span>Додати команду</span></button>
+          <button type="button" data-tab="reservationsTab"><i data-lucide="bookmark"></i><span>Бронювання місць</span></button>
           <button type="button" data-tab="matchesTab"><i data-lucide="git-branch"></i><span>Сітки</span></button>
           <button type="button" data-tab="usersTab"><i data-lucide="users"></i><span>Користувачі</span></button>
           <button type="button" data-tab="siteTab"><i data-lucide="settings"></i><span>Налаштування сайту</span></button>
@@ -105,7 +115,7 @@
           <div class="admin-account"><div class="admin-account-copy"><b>Адміністратор</b><span id="adminEmail"></span></div><button id="logoutBtn" class="secondary-btn" type="button"><i data-lucide="log-out"></i><span>Вийти</span></button></div>
         </div>
         <label class="admin-mobile-section" for="adminSectionSelect"><span>РОЗДІЛ</span><select id="adminSectionSelect">
-          <option value="overviewTab">Огляд</option><option value="tournamentsTab">Турніри</option><option value="applicationsTab">Заявки</option><option value="manualTeamsTab">Додати команду</option><option value="matchesTab">Сітки</option><option value="usersTab">Користувачі</option><option value="siteTab">Налаштування сайту</option>
+          <option value="overviewTab">Огляд</option><option value="tournamentsTab">Турніри</option><option value="applicationsTab">Заявки</option><option value="manualTeamsTab">Додати команду</option><option value="reservationsTab">Бронювання місць</option><option value="matchesTab">Сітки</option><option value="usersTab">Користувачі</option><option value="siteTab">Налаштування сайту</option>
         </select></label>
 
         <section id="overviewTab" class="admin-tab">
@@ -234,6 +244,27 @@
       </section>
     </section>
 
+    <section id="reservationsTab" class="admin-tab hidden">
+      <section class="panel">
+        <div class="panel-head"><span><i data-lucide="bookmark"></i> БРОНЮВАННЯ МІСЦЬ</span><strong>РЕЗЕРВ КОМАНД</strong></div>
+        <p class="reservation-intro">Зарезервуй одне місце для команди за назвою. Коли вона подасть заявку на вибраний турнір із цією ж назвою, бронювання зніметься автоматично. Регістр літер і пробіли на краях назви не впливають.</p>
+        <form id="reservationForm" class="team-form compact-form">
+          <div class="form-grid">
+            <label>Турнір<select id="reservationTournament" required><option value="">Обери турнір</option></select></label>
+            <label>Назва команди<input id="reservationTeamName" type="text" minlength="2" maxlength="40" placeholder="Наприклад: Valkyrie" required autocomplete="off"></label>
+          </div>
+          <div class="form-actions">
+            <button id="reservationSubmit" class="primary-btn" type="submit"><i data-lucide="bookmark-plus"></i><span>Забронювати місце</span></button>
+            <p id="reservationMessage" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span><i data-lucide="list-checks"></i> АКТИВНІ БРОНЮВАННЯ</span><strong id="reservationCount">0</strong></div>
+        <div id="reservationSummary" class="reservation-summary"></div>
+        <div id="reservationsList" class="manual-teams-list"><div class="empty-state">Обери турнір, щоб побачити бронювання.</div></div>
+      </section>
+    </section>
     <section id="applicationsTab" class="admin-tab hidden">
       <div class="admin-section-head"><div><span class="admin-eyebrow">КОМАНДИ ТА УЧАСНИКИ</span><h2>Заявки команд</h2><p>Фільтруй заявки та переглядай склад перед рішенням.</p></div></div>
       <div id="stats" class="admin-stats" role="group" aria-label="Фільтр заявок за статусом"></div>
@@ -300,5 +331,6 @@
   </div>
 </footer>
 <script type="module" src="ui.js?v=20261102-01"></script>
-<script type="module" src="account.js?v=20261105-02"></script>
+<script type="module" src="account.js?v=20261105-03"></script>
+<script type="module" src="reservations.js?v=20261105-01"></script>
 </body></html>
