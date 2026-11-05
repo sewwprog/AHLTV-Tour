@@ -178,3 +178,43 @@ body:has(.home-page) .shell,body:has(.apply-page) .shell,body:has(.tournament-de
   .home-page .event-card,.home-page .journey-steps li{transition:none}
   .home-page .event-card:hover,.primary-btn:hover,.secondary-btn:hover{transform:none}
 }
+
+/* Header repair: the legacy full-height nav must not stretch the selected tab. */
+.site-header .header-inner{align-items:center}
+.site-header .main-nav{
+  flex:0 0 auto;
+  align-self:center;
+  height:46px;
+  min-height:46px;
+  margin-top:0;
+  margin-bottom:0;
+  padding:5px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+}
+.site-header .main-nav a{
+  position:relative;
+  flex:0 0 auto;
+  align-self:center;
+  height:34px;
+  min-height:34px;
+  padding:0 15px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  line-height:1;
+}
+.site-header .main-nav a.active{
+  color:#fff;
+  background:linear-gradient(110deg,#f47843,#de572d);
+  box-shadow:0 7px 21px rgba(234,93,44,.19);
+}
+@media(max-width:700px){
+  .site-header .main-nav{display:none}
+  .site-header .header-inner{height:66px}
+}
