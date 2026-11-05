@@ -18,10 +18,12 @@
     [/^Відкрити сітку (\d+) повністю у новій вкладці$/,(_,n)=>"Open bracket "+n+" in a new tab"],
     [/^Команди турніру (.*)$/,(_,n)=>"Teams in "+n],
     [/^Матчі турніру (.*)$/,(_,n)=>"Matches in "+n],
-    [/^Логотип (.*)$/,(_,n)=>"Logo of "+n]
+    [/^Логотип (.*)$/,(_,n)=>"Logo of "+n],
+    [/^(.+) · до (\d+) команд$/,(_,t,n)=>t+" · up to "+n+" teams"]
   ];
   const original=new WeakMap();
   const attrs=["placeholder","title","aria-label"];
+  const originalTitle=document.title;
   let language="uk";
   try { language=localStorage.getItem("ahltv-tour-language")==="en"?"en":"uk"; } catch {}
   const translate=(input)=>{
@@ -59,7 +61,7 @@
   function update(){
     if(scheduled)return;
     scheduled=true;
-    queueMicrotask(()=>{scheduled=false;applyNode(document.body);document.documentElement.lang=language;document.title=language==="en"?translate(document.title):document.title;document.querySelectorAll("[data-lang-option]").forEach(b=>{const active=b.dataset.langOption===language;b.classList.toggle("is-active",active);b.setAttribute("aria-pressed",String(active));});});
+    queueMicrotask(()=>{scheduled=false;applyNode(document.body);document.documentElement.lang=language;document.title=language==="en"?translate(originalTitle):originalTitle;document.querySelectorAll("[data-lang-option]").forEach(b=>{const active=b.dataset.langOption===language;b.classList.toggle("is-active",active);b.setAttribute("aria-pressed",String(active));});});
   }
   function init(){
     const header=document.querySelector(".header-inner");
