@@ -49,7 +49,9 @@ import {
   LoaderCircle,
   ShieldCheck,
   Type,
-  Search
+  Search,
+  Bookmark,
+  BookmarkPlus
 } from "https://esm.sh/lucide@0.468.0";
 
 const SUPABASE_URL="https://hfxzdifqcjbslmxffvlf.supabase.co";
@@ -62,7 +64,7 @@ const icons={
   Pencil,Trash2,Check,XCircle,Upload,Image,Save,Shield,CircleDot,Clock3,Swords,
   LayoutDashboard,ScrollText,ChevronRight,Plus,LockKeyhole,UserCheck,UserX,
   ListChecks,CircleUserRound,ArrowRight,BadgeCheck,CircleCheck,CircleX,
-  ClipboardPlus,ImagePlus,Images,LoaderCircle,ShieldCheck,Type,Search
+  ClipboardPlus,ImagePlus,Images,LoaderCircle,ShieldCheck,Type,Search,Bookmark,BookmarkPlus
 };
 
 function renderIcons(){
