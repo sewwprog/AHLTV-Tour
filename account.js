@@ -402,26 +402,39 @@ tournamentLogoFile?.addEventListener("change",()=>{
   else previewImage(tournamentLogoPreview,tournaments.find(t=>t.id===editingTournamentId)?.logo_url,fallback);
 });
 
+// Older tournament schemas do not always contain name_font.
+// Retry only when PostgREST explicitly reports that one missing column.
+async function saveTournamentRow(payload,id){
+  const write=data=>id
+    ?supabase.from("tournaments").update(data).eq("id",id).select("id,logo_url").single()
+    :supabase.from("tournaments").insert(data).select("id,logo_url").single();
+  let result=await write(payload);
+  let fontSkipped=false;
+  const missingFont=result.error?.code==="PGRST204"
+    && /name_font/.test(result.error?.message||"")
+    && /schema cache/.test(result.error?.message||"");
+  if(missingFont){
+    const {name_font,...supportedPayload}=payload;
+    result=await write(supportedPayload);
+    fontSkipped=!result.error;
+  }
+  if(result.error)throw result.error;
+  return {saved:result.data,fontSkipped};
+}
+
 tournamentForm.addEventListener("submit",async e=>{
   e.preventDefault();
   const payload=tournamentPayload(tournamentForm);
   const wasEditing=!!editingTournamentId;
   let saved=null;
+  let fontSkipped=false;
   tournamentListMessage.textContent="";
   setTournamentSaving(true);
   tournamentMessage.textContent="Зберігаємо...";
   tournamentMessage.className="";
 
   try{
-    if(editingTournamentId){
-      const result=await supabase.from("tournaments").update(payload).eq("id",editingTournamentId).select("id,logo_url").single();
-      if(result.error)throw result.error;
-      saved=result.data;
-    }else{
-      const result=await supabase.from("tournaments").insert(payload).select("id,logo_url").single();
-      if(result.error)throw result.error;
-      saved=result.data;
-    }
+    ({saved,fontSkipped}=await saveTournamentRow(payload,editingTournamentId));
 
     const logoFile=tournamentLogoFile.files?.[0];
     if(logoFile){
@@ -435,7 +448,7 @@ tournamentForm.addEventListener("submit",async e=>{
     tournamentEditor.open=false;
     if(!wasEditing)tournamentSearch.value="";
     await loadTournaments();
-    tournamentListMessage.textContent=wasEditing?"Турнір оновлено.":"Турнір створено.";
+    tournamentListMessage.textContent=(wasEditing?"Турнір оновлено.":"Турнір створено.")+(fontSkipped?" Вибраний шрифт не збережено: база даних ще не підтримує це поле.":"");
     tournamentListMessage.className="admin-feedback success";
   }catch(error){
     console.error(error);
