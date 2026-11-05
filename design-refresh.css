@@ -1,0 +1,180 @@
+/* AHLTV TOUR — visual refresh, November 2026.
+   Presentation only: tournament logic, forms and permissions stay intact. */
+:root{
+  --design-surface:#1b1c20;
+  --design-surface-2:#222327;
+  --design-stroke:rgba(255,255,255,.095);
+  --design-bright:#ff8859;
+  --design-easing:cubic-bezier(.22,1,.36,1);
+}
+body{
+  background:
+    radial-gradient(ellipse 740px 510px at 92% -140px,rgba(255,116,60,.075),transparent 80%),
+    radial-gradient(ellipse 640px 500px at 3% 44%,rgba(124,93,82,.055),transparent 80%),
+    #111215;
+}
+.site-header{background:rgba(17,18,21,.86);border-bottom-color:rgba(255,255,255,.07);backdrop-filter:blur(22px) saturate(130%)}
+.site-header:before{background:linear-gradient(90deg,transparent,rgba(255,130,76,.36) 45%,transparent)}
+.header-inner{height:74px;gap:15px}
+.header-inner>.brand .brand-mark{border-radius:13px;box-shadow:0 8px 32px rgba(236,95,48,.19),inset 0 1px rgba(255,255,255,.2)}
+.header-inner>.brand .brand-copy strong{letter-spacing:-.055em}
+.main-nav{border-radius:13px;background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.065)}
+.main-nav a{border-radius:9px}
+.main-nav a.active{background:linear-gradient(110deg,#f47843,#de572d);box-shadow:0 7px 21px rgba(234,93,44,.19)}
+.account-btn{border-radius:11px}
+.language-switch{border-radius:11px!important;background:rgba(255,255,255,.035)!important}
+body:has(.home-page) .shell,body:has(.apply-page) .shell,body:has(.tournament-detail-page) .shell{max-width:1280px}
+.page-topline{letter-spacing:.11em}
+.home-page .home-hero{
+  position:relative;
+  min-height:385px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:22px;
+  isolation:isolate;
+  background:
+    linear-gradient(90deg,rgba(14,15,18,.97) 0%,rgba(14,15,18,.92) 30%,rgba(14,15,18,.52) 72%,rgba(14,15,18,.48) 100%),
+    url("assets/home-hero.webp") center 48%/cover no-repeat,
+    #1c1c20;
+  box-shadow:0 28px 60px -35px rgba(0,0,0,.74),inset 0 1px rgba(255,255,255,.075);
+}
+.home-page .home-hero:before{
+  content:"";pointer-events:none;position:absolute;inset:0;z-index:0;
+  background:linear-gradient(165deg,transparent 45%,rgba(232,83,41,.085)),
+             repeating-linear-gradient(90deg,transparent 0,transparent 119px,rgba(255,255,255,.025) 120px);
+}
+.home-page .home-hero:after{
+  content:"A";position:absolute;right:4%;bottom:-31%;z-index:0;
+  font:900 clamp(220px,36vw,510px)/1 "Space Mono",monospace;
+  color:rgba(255,255,255,.026);pointer-events:none;transform:rotate(-9deg);
+}
+.home-page .home-hero-main{z-index:1;max-width:900px;padding:57px clamp(26px,5vw,76px)}
+.home-page .home-hero-main:before{top:57px;bottom:57px;width:3px;border-radius:2px;background:linear-gradient(#ff9762,#d74a28,transparent)}
+.home-page .hero-kicker{color:#ff986c;font-size:10px;letter-spacing:.17em}
+.home-page .hero-kicker-dot{box-shadow:0 0 0 4px rgba(255,137,82,.13)}
+.home-page .home-hero h1{
+  margin:19px 0 10px;
+  font-size:clamp(48px,6vw,82px);
+  line-height:.99;letter-spacing:-.075em;font-weight:850;text-wrap:balance;
+}
+.home-page .hero-manifesto{color:#f8f6f3;font-size:clamp(18px,2.25vw,29px);letter-spacing:-.052em;line-height:1.15;font-weight:750}
+.home-page .hero-manifesto span{color:#ff9269}
+.home-page .home-hero p{margin:18px 0 0;color:#b6b1ae;font-size:14px;line-height:1.75;max-width:550px}
+.home-page .hero-actions{margin-top:28px;gap:11px}
+.primary-btn,.secondary-btn,.account-btn,.btn{transition:background .22s ease,border-color .22s ease,box-shadow .22s ease,transform .26s var(--design-easing),color .2s ease}
+.primary-btn{background:linear-gradient(115deg,#ff8251,#ed6637);border-color:rgba(255,151,100,.3);box-shadow:0 12px 32px -19px rgba(240,100,52,.7);font-weight:800}
+.primary-btn:hover{background:linear-gradient(115deg,#ff9869,#f06c3d);box-shadow:0 14px 37px -14px rgba(240,100,52,.49);transform:translateY(-2px)}
+.secondary-btn:hover,.account-btn:hover{transform:translateY(-2px)}
+.home-page .hero-actions a{min-height:48px;padding-inline:20px;border-radius:11px}
+.home-page .hero-secondary{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.14);backdrop-filter:blur(10px)}
+.home-page .hero-corner-label{z-index:1}
+.home-page .journey{margin:18px 0 58px;background:#1a1b1f;border-color:var(--design-stroke);border-radius:17px;box-shadow:0 16px 44px -42px #000}
+.home-page .journey-intro{background:linear-gradient(130deg,rgba(240,106,59,.065),transparent)}
+.home-page .journey-steps li{transition:background .22s ease}
+.home-page .journey-steps li:hover{background:rgba(255,255,255,.03)}
+.home-page .journey-number{font-size:11px;color:#ff9369}
+.home-page .journey-steps b{font-size:13px}
+.home-page .section-heading{margin-bottom:23px}
+.home-page .section-heading h2{font-size:clamp(28px,3.4vw,40px);line-height:1.12;letter-spacing:-.055em}
+.home-page .section-heading p{color:#a9a5a1}
+.home-page .tournaments-list{gap:15px}
+.home-page .event-card{
+  position:relative;
+  border:1px solid rgba(255,255,255,.095);
+  border-radius:18px;
+  background:linear-gradient(116deg,#1e1f23 0%,#1a1b20 100%);
+  box-shadow:0 15px 35px -33px rgba(0,0,0,.95);
+  transition:transform .28s var(--design-easing),border-color .24s ease,box-shadow .28s ease;
+}
+.home-page .event-card:after{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,rgba(255,138,81,.4),transparent 65%);pointer-events:none}
+.home-page .event-card:hover{transform:translateY(-4px);border-color:rgba(255,157,108,.29);box-shadow:0 24px 48px -32px rgba(0,0,0,.9)}
+.home-page .event-main{padding:clamp(18px,2.7vw,30px)}
+.home-page .event-logo{width:65px;height:65px;border-radius:15px;background:#252327;border-color:rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.home-page .event-logo.has-logo{padding:6px}
+.home-page .event-heading{grid-template-columns:65px minmax(0,1fr) auto;gap:17px}
+.home-page .event-title h3{font-size:clamp(18px,2vw,24px);letter-spacing:-.045em}
+.home-page .event-title p{max-width:760px;line-height:1.7}
+.home-page .event-meta{gap:9px 17px;color:#b0a9a4}
+.home-page .event-status{border-radius:9px}
+.home-page .event-footer{margin-top:24px;padding-top:18px;border-top-color:rgba(255,255,255,.085)}
+.home-page .event-disclosure>summary{border-radius:10px;transition:background .2s ease,border-color .2s ease}
+.home-page .event-disclosure>summary:hover{background:#2b2929;border-color:rgba(255,150,104,.22)}
+.home-page .event-actions a{border-radius:10px;min-height:43px}
+.home-page .home-cta{
+  position:relative;overflow:hidden;
+  margin:61px 0 30px;padding:38px clamp(23px,4vw,48px);
+  border:1px solid rgba(247,130,78,.17);
+  border-radius:18px;
+  background:radial-gradient(ellipse at 86% 45%,rgba(251,119,64,.16),transparent 41%),linear-gradient(115deg,#25201e,#1a1b20 69%);
+}
+.home-page .home-cta:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(140deg,transparent 0,transparent 59px,rgba(255,255,255,.017) 60px)}
+.home-page .home-cta h2{font-size:clamp(24px,3vw,37px);line-height:1.12}
+.home-page .home-cta>a{position:relative;z-index:1}
+.site-footer{border-top-color:rgba(255,255,255,.07)}
+.footer-brand .brand-mark{box-shadow:none}
+.footer-main{padding-block:38px}
+.footer-inner{color:#88817c}
+.tournament-detail-page .tournament-detail-hero{
+  border:1px solid rgba(255,255,255,.105);border-radius:19px;
+  background:radial-gradient(ellipse at 90% 0,rgba(247,113,63,.14),transparent 55%),linear-gradient(110deg,#202024,#18191d);
+  box-shadow:0 20px 55px -45px #000;
+}
+.tournament-detail-page .detail-logo{border-radius:18px}
+.tournament-detail-page .detail-tabs{border-radius:12px}
+.tournament-detail-page .panel:not(.tournament-detail-hero),.apply-page .panel{border-color:rgba(255,255,255,.095);border-radius:16px;background-color:#1b1c20}
+.tournament-detail-page .panel-head,.apply-page .panel-head{border-bottom-color:rgba(255,255,255,.08)}
+.tournament-detail-page .detail-team-card,.tournament-detail-page .detail-team-row{transition:background .2s ease,border-color .2s ease}
+.tournament-detail-page .detail-team-card:hover,.tournament-detail-page .detail-team-row:hover{background:rgba(255,255,255,.035)}
+.apply-page .page-title.compact{border-radius:18px;border-color:rgba(255,255,255,.11);background:radial-gradient(ellipse at 100% 0,rgba(244,109,58,.11),transparent 55%),linear-gradient(120deg,#252023,#1a1b1f)}
+.apply-page .team-form fieldset{border-color:rgba(255,255,255,.085);border-radius:14px}
+.apply-page .roster-card{border-radius:12px;transition:border-color .2s ease,background .2s ease}
+.apply-page .roster-card:hover{border-color:rgba(255,147,99,.27)}
+.apply-page .team-form input:not([type=checkbox]):not([type=file]),.apply-page .team-form textarea,.apply-page .team-form select,.apply-page .tournament-select-wrap select{
+  border-color:rgba(255,255,255,.11);background:#17181c;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.apply-page .team-form input:focus,.apply-page .team-form textarea:focus,.apply-page .team-form select:focus{border-color:#ec8155;box-shadow:0 0 0 3px rgba(240,106,59,.12);outline:0}
+:where(.home-page,.apply-page,.tournament-detail-page,.site-header) a:focus-visible,
+:where(.home-page,.apply-page,.tournament-detail-page,.site-header) button:focus-visible,
+:where(.home-page,.apply-page,.tournament-detail-page) summary:focus-visible{outline:2px solid #ffad85;outline-offset:3px}
+@media (max-width:900px){
+  .home-page .home-hero{min-height:350px;grid-template-columns:minmax(0,1fr) 180px}
+  .home-page .home-hero-main{padding:43px 36px}
+  .home-page .home-hero-main:before{top:43px;bottom:43px}
+}
+@media (max-width:700px){
+  .header-inner{height:66px;gap:7px}
+  .home-page .home-hero{min-height:0;display:block;border-radius:17px;background:linear-gradient(95deg,rgba(14,15,18,.98),rgba(14,15,18,.7)),url("assets/home-hero.webp") 65% center/cover no-repeat}
+  .home-page .home-hero:after{font-size:210px;right:-7%;bottom:-13%}
+  .home-page .home-hero-main{padding:39px 23px}
+  .home-page .home-hero-main:before{top:39px;bottom:39px}
+  .home-page .home-hero h1{font-size:clamp(39px,10vw,56px);margin-top:16px}
+  .home-page .hero-manifesto{font-size:22px}
+  .home-page .home-hero p{font-size:12px;margin-top:14px}
+  .home-page .hero-actions{margin-top:23px}
+  .home-page .hero-actions a{min-height:46px}
+  .home-page .journey{margin:13px 0 36px;border-radius:15px}
+  .home-page .journey-intro{padding:17px 18px}
+  .home-page .journey-steps li{padding:14px 18px}
+  .home-page .section-heading{margin-bottom:16px}
+  .home-page .tournaments-list{gap:11px}
+  .home-page .event-main{padding:18px}
+  .home-page .event-heading{grid-template-columns:48px minmax(0,1fr);gap:11px}
+  .home-page .event-logo{width:48px;height:48px;border-radius:11px}
+  .home-page .event-status{grid-column:2;justify-self:start}
+  .home-page .event-title h3{font-size:17px}
+  .home-page .event-footer{margin-top:15px;padding-top:13px}
+  .home-page .event-card:after{left:18px;right:18px}
+  .home-page .event-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .home-page .event-actions a{font-size:11px;min-width:0}
+  .home-page .home-cta{margin:35px 0 20px;padding:27px 22px}
+  .tournament-detail-page .tournament-detail-hero{border-radius:15px}
+}
+@media(max-width:380px){
+  .home-page .hero-actions{grid-template-columns:1fr}
+  .home-page .event-actions{grid-template-columns:1fr}
+  .home-page .event-actions a:only-child{grid-column:1}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page .event-card,.home-page .journey-steps li{transition:none}
+  .home-page .event-card:hover,.primary-btn:hover,.secondary-btn:hover{transform:none}
+}
