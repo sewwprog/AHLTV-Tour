@@ -291,7 +291,7 @@ async function loadTournament(){
     return `<p>${esc(block).replace(/\n/g,"<br>")}</p>`;
   }).join("");
   rulesRoot.innerHTML=(pdfUrl
-    ? `<div class="rules-pdf-public"><i data-lucide="file-text"></i><div><strong>Офіційні правила турніру</strong><small>Документ PDF</small></div><a class="primary-btn" target="_blank" rel="noopener noreferrer" href="${esc(pdfUrl)}"><i data-lucide="external-link"></i><span>Відкрити PDF</span></a></div>`
+    ? `<div class="rules-pdf-public"><i data-lucide="scroll-text"></i><div><strong>Офіційні правила турніру</strong><small>Документ PDF</small></div><a class="primary-btn" target="_blank" rel="noopener noreferrer" href="${esc(pdfUrl)}"><i data-lucide="external-link"></i><span>Відкрити PDF</span></a></div>`
     : "")+(rules?textHtml:pdfUrl?"":'<div class="empty-state">Правила для цього турніру ще не додані.</div>');
 
   window.refreshIcons?.();
