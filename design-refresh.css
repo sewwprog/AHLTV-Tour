@@ -218,3 +218,19 @@ body:has(.home-page) .shell,body:has(.apply-page) .shell,body:has(.tournament-de
   .site-header .main-nav{display:none}
   .site-header .header-inner{height:66px}
 }
+
+/* Tournament PDF rule attachments */
+.rules-pdf-editor{display:grid;gap:12px;padding:17px 18px;margin:12px 0 18px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.025)}
+.rules-pdf-editor>label:first-child{display:grid;gap:5px;color:#f0e9e4}
+.rules-pdf-editor>label:first-child strong{font-size:13px}
+.rules-pdf-editor>label:first-child small{color:#aba6a2;font-weight:500}
+.rules-pdf-editor input[type=file]{width:100%;max-width:100%;color:#d0cbc7}
+.rules-pdf-current a{color:#ffa27b;text-decoration:underline;text-underline-offset:4px;font-weight:700}
+.rules-pdf-editor [hidden],.rules-pdf-current[hidden]{display:none!important}
+.rules-pdf-public{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 20px;padding:19px;border:1px solid rgba(248,128,77,.2);border-radius:14px;background:linear-gradient(115deg,rgba(247,120,66,.1),rgba(255,255,255,.025))}
+.rules-pdf-public>svg{width:26px;height:26px;flex:0 0 auto;color:#ffa07a}
+.rules-pdf-public>div{display:grid;gap:4px;flex:1;min-width:140px}
+.rules-pdf-public strong{color:#f8f4f1;font-size:14px}
+.rules-pdf-public small{color:#a9a3a0;font-size:11px}
+.rules-pdf-public>a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;white-space:nowrap}
+@media(max-width:530px){.rules-pdf-public>a{width:100%}.rules-pdf-editor{padding:14px}}
