@@ -1,4 +1,5 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import {optimizeUploadImage,optimizedExtension} from "./image-optimizer.js";
 
 const supabase=createClient(
   "https://hfxzdifqcjbslmxffvlf.supabase.co",
@@ -82,12 +83,13 @@ async function uploadTeamLogo(file){
   if(file.size>5*1024*1024)throw new Error("Логотип завеликий. Максимум 5 МБ.");
   if(!allowedTeamLogoTypes.has(file.type))throw new Error("Логотип має бути PNG, JPG або WEBP.");
 
-  const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+  const optimized=await optimizeUploadImage(file,{maxDimension:1400,quality:0.82});
+  const ext=optimizedExtension(optimized);
   const path=`team-logos/${currentUser.id}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
   const {error}=await retryNetwork(()=>supabase.storage
     .from(ASSET_BUCKET)
-    .upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type}));
+    .upload(path,optimized,{cacheControl:"3600",upsert:false,contentType:optimized.type}));
 
   if(error)throw error;
 
