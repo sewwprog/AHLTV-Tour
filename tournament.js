@@ -280,8 +280,8 @@ async function loadTournament(){
   const rulesMarker="[AHLTV_RULES_PDF]";
   const markerLine=rulesLines.find(line=>line.startsWith(rulesMarker))||"";
   const pdfCandidate=markerLine.slice(rulesMarker.length).trim();
-  const allowedPdfPrefix="https://hfxzdifqcjbslmxffvlf.supabase.co/storage/v1/object/public/ahltv-assets/";
-  const pdfUrl=pdfCandidate.startsWith(allowedPdfPrefix)&&/^https:\/\//.test(pdfCandidate)?pdfCandidate:"";
+  const allowedPdfPrefixes=["https://hfxzdifqcjbslmxffvlf.supabase.co/storage/v1/object/public/ahltv-rules/","https://hfxzdifqcjbslmxffvlf.supabase.co/storage/v1/object/public/ahltv-assets/"];
+  const pdfUrl=allowedPdfPrefixes.some(prefix=>pdfCandidate.startsWith(prefix))&&/^https:\/\//.test(pdfCandidate)?pdfCandidate:"";
   const rules=rulesLines.filter(line=>!line.startsWith(rulesMarker)).join("\n").trim();
   rulesRoot.classList.toggle("is-empty",!rules&&!pdfUrl);
   const textHtml=rules.split(/\n{2,}/).map(block=>{
