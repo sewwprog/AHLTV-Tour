@@ -1,5 +1,6 @@
 import {createClient} from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {FONTS,DEFAULT_FONT,fontCss,fontLabel} from "./fonts.js";
+import {optimizeUploadImage,optimizedExtension} from "./image-optimizer.js";
 const SUPABASE_URL="https://hfxzdifqcjbslmxffvlf.supabase.co";
 const SUPABASE_KEY="sb_publishable_Z3cDbEmw_8OcJsXAwypOfw_-IwC-RFi";
 const USERS_URL=SUPABASE_URL+"/functions/v1/admin-users";
@@ -60,12 +61,17 @@ async function uploadAsset(file,folder){
   if(file.size>5*1024*1024)throw new Error("Файл завеликий. Максимум 5 МБ.");
   if(!file.type.startsWith("image/"))throw new Error("Можна завантажувати тільки зображення.");
 
-  const ext=(file.name.split(".").pop()||"img").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,8)||"img";
+  // Bracket images may contain small text; keep more resolution for those.
+  const optimized=await optimizeUploadImage(file,{
+    maxDimension:folder.startsWith("brackets/")?2400:1600,
+    quality:folder.startsWith("brackets/")?0.88:0.82
+  });
+  const ext=optimizedExtension(optimized);
   const path=`${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
   const {error}=await supabase.storage
     .from(ASSET_BUCKET)
-    .upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+    .upload(path,optimized,{cacheControl:"3600",upsert:false,contentType:optimized.type});
 
   if(error)throw error;
 
