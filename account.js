@@ -342,11 +342,63 @@ siteSettingsForm?.addEventListener("submit",async e=>{
   }
 });
 
+
+// A marker in the existing rules_text field avoids a database migration.
+const RULES_PDF_MARKER="[AHLTV_RULES_PDF]";
+const RULES_PDF_MAX_BYTES=5*1024*1024;
+const rulesPdfInput=$("#tournamentRulesPdfFile");
+const rulesPdfCurrent=$("#tournamentRulesPdfCurrent");
+const rulesPdfRemove=$("#tournamentRulesPdfRemove");
+const rulesPdfRemoveWrap=$("#tournamentRulesPdfRemoveWrap");
+let currentRulesPdfUrl="";
+function splitTournamentRules(value){
+  const lines=String(value||"").split(/\r?\n/);
+  const marker=lines.find(line=>line.startsWith(RULES_PDF_MARKER))||"";
+  const url=marker.slice(RULES_PDF_MARKER.length).trim();
+  const allowedPrefix=SUPABASE_URL+"/storage/v1/object/public/"+ASSET_BUCKET+"/";
+  return {
+    text:lines.filter(line=>!line.startsWith(RULES_PDF_MARKER)).join("\n").trim(),
+    pdfUrl:url.startsWith(allowedPrefix)&&/^https:\/\//.test(url)?url:""
+  };
+}
+function composeTournamentRules(text,pdfUrl){
+  const clean=splitTournamentRules(text).text;
+  return clean+(pdfUrl?(clean?"\n\n":"")+RULES_PDF_MARKER+pdfUrl:"")||null;
+}
+function showTournamentRulesPdf(url){
+  currentRulesPdfUrl=url||"";
+  if(rulesPdfInput)rulesPdfInput.value="";
+  if(rulesPdfRemove)rulesPdfRemove.checked=false;
+  if(rulesPdfRemoveWrap)rulesPdfRemoveWrap.hidden=!url;
+  if(!rulesPdfCurrent)return;
+  rulesPdfCurrent.replaceChildren();
+  rulesPdfCurrent.hidden=!url;
+  if(url){
+    const link=document.createElement("a");
+    link.href=url;link.target="_blank";link.rel="noopener noreferrer";
+    link.textContent="Переглянути поточні правила (PDF)";
+    rulesPdfCurrent.appendChild(link);
+  }
+}
+async function uploadTournamentRulesPdf(file,tournamentId){
+  if(file.size>RULES_PDF_MAX_BYTES)throw new Error("PDF завеликий. Максимум 5 МБ.");
+  if(file.type!=="application/pdf" && !/\.pdf$/i.test(file.name))throw new Error("Обери файл у форматі PDF.");
+  const signature=new Uint8Array(await file.slice(0,5).arrayBuffer());
+  if(signature.length!==5||String.fromCharCode(...signature)!=="%PDF-")throw new Error("Файл не схожий на справжній PDF.");
+  const path=`tournaments/${tournamentId}/rules-${Date.now()}-${crypto.randomUUID()}.pdf`;
+  const {error}=await supabase.storage.from(ASSET_BUCKET).upload(path,file,{
+    contentType:"application/pdf",cacheControl:"3600",upsert:false
+  });
+  if(error)throw new Error("Не вдалося завантажити PDF у Storage: "+error.message);
+  const {data}=supabase.storage.from(ASSET_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
 function tournamentPayload(form){
   const d=Object.fromEntries(new FormData(form).entries());
   return {
     name:d.name.trim(),short_name:d.short_name.trim()||null,description:d.description.trim()||null,
-    rules_text:d.rules_text.trim()||null,
+    rules_text:composeTournamentRules(d.rules_text.trim(),rulesPdfRemove?.checked?"":currentRulesPdfUrl),
     game:d.game.trim(),format:d.format.trim(),max_teams:Number(d.max_teams),status:d.status,
     name_font:form.elements.name_font?.value||DEFAULT_FONT,
     registration_open:form.elements.registration_open.checked,is_visible:form.elements.is_visible.checked,
@@ -357,6 +409,7 @@ function tournamentPayload(form){
 function resetTournamentForm(){
   editingTournamentId=null;
   tournamentForm.reset();
+  showTournamentRulesPdf("");
   tournamentFormDirty=false;
   tournamentForm.elements.game.value="CS2";tournamentForm.elements.format.value="BO3";tournamentForm.elements.max_teams.value="16";
   tournamentForm.elements.status.value="registration";tournamentForm.elements.registration_open.checked=true;tournamentForm.elements.is_visible.checked=true;
@@ -451,6 +504,19 @@ tournamentForm.addEventListener("submit",async e=>{
       if(error)throw error;
     }
 
+    const pdfFile=rulesPdfInput?.files?.[0];
+    let nextPdfUrl=rulesPdfRemove?.checked?"":currentRulesPdfUrl;
+    if(pdfFile){
+      tournamentMessage.textContent="Завантажуємо правила PDF...";
+      nextPdfUrl=await uploadTournamentRulesPdf(pdfFile,saved.id);
+    }
+    const nextRulesText=composeTournamentRules(tournamentForm.elements.rules_text.value,nextPdfUrl);
+    if(nextRulesText!==payload.rules_text){
+      const {error:rulesSaveError}=await supabase.from("tournaments")
+        .update({rules_text:nextRulesText}).eq("id",saved.id);
+      if(rulesSaveError)throw rulesSaveError;
+    }
+
     resetTournamentForm();
     tournamentEditor.open=false;
     if(!wasEditing)tournamentSearch.value="";
@@ -467,7 +533,7 @@ tournamentForm.addEventListener("submit",async e=>{
       cancelTournamentEdit.classList.remove("hidden");
       tournamentFormTitle.textContent="Редагувати турнір";
       await loadTournaments();
-      tournamentMessage.textContent="Дані турніру збережено, але логотип не завантажено. Перевір файл і повтори збереження.";
+      tournamentMessage.textContent="Дані турніру збережено, але файл логотипа або PDF не вдалося завантажити/прикріпити. Перевір файл і повтори збереження.";
     }else{
       tournamentMessage.textContent=error?.message||"Не вдалося зберегти турнір.";
     }
@@ -540,7 +606,7 @@ function renderTournaments(){
   tournamentList.querySelectorAll("[data-edit-tournament]").forEach(btn=>btn.addEventListener("click",()=>{
     const t=tournaments.find(x=>x.id===Number(btn.dataset.editTournament));if(!t||!canDiscardTournamentDraft())return;
     editingTournamentId=t.id;const f=tournamentForm.elements;
-    f.name.value=t.name;f.short_name.value=t.short_name||"";f.description.value=t.description||"";f.rules_text.value=t.rules_text||"";f.game.value=t.game;f.format.value=t.format;f.max_teams.value=t.max_teams;f.status.value=t.status;f.registration_open.checked=t.registration_open;f.is_visible.checked=t.is_visible;
+    f.name.value=t.name;f.short_name.value=t.short_name||"";f.description.value=t.description||"";const rulesParts=splitTournamentRules(t.rules_text);f.rules_text.value=rulesParts.text;showTournamentRulesPdf(rulesParts.pdfUrl);f.game.value=t.game;f.format.value=t.format;f.max_teams.value=t.max_teams;f.status.value=t.status;f.registration_open.checked=t.registration_open;f.is_visible.checked=t.is_visible;
     if(tournamentNameFont)tournamentNameFont.value=t.name_font||DEFAULT_FONT;
     updateNamePreview();
     f.starts_at.value=t.starts_at?new Date(new Date(t.starts_at).getTime()-new Date(t.starts_at).getTimezoneOffset()*60000).toISOString().slice(0,16):"";
