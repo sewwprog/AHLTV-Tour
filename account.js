@@ -355,10 +355,10 @@ function splitTournamentRules(value){
   const lines=String(value||"").split(/\r?\n/);
   const marker=lines.find(line=>line.startsWith(RULES_PDF_MARKER))||"";
   const url=marker.slice(RULES_PDF_MARKER.length).trim();
-  const allowedPrefix=SUPABASE_URL+"/storage/v1/object/public/"+ASSET_BUCKET+"/";
+  const allowedPrefixes=[SUPABASE_URL+"/storage/v1/object/public/ahltv-rules/",SUPABASE_URL+"/storage/v1/object/public/"+ASSET_BUCKET+"/"];
   return {
     text:lines.filter(line=>!line.startsWith(RULES_PDF_MARKER)).join("\n").trim(),
-    pdfUrl:url.startsWith(allowedPrefix)&&/^https:\/\//.test(url)?url:""
+    pdfUrl:allowedPrefixes.some(prefix=>url.startsWith(prefix))&&/^https:\/\//.test(url)?url:""
   };
 }
 function composeTournamentRules(text,pdfUrl){
@@ -385,12 +385,19 @@ async function uploadTournamentRulesPdf(file,tournamentId){
   if(file.type!=="application/pdf" && !/\.pdf$/i.test(file.name))throw new Error("Обери файл у форматі PDF.");
   const signature=new Uint8Array(await file.slice(0,5).arrayBuffer());
   if(signature.length!==5||String.fromCharCode(...signature)!=="%PDF-")throw new Error("Файл не схожий на справжній PDF.");
+  const rulesBucket="ahltv-rules";
   const path=`tournaments/${tournamentId}/rules-${Date.now()}-${crypto.randomUUID()}.pdf`;
-  const {error}=await supabase.storage.from(ASSET_BUCKET).upload(path,file,{
+  const {error}=await supabase.storage.from(rulesBucket).upload(path,file,{
     contentType:"application/pdf",cacheControl:"3600",upsert:false
   });
-  if(error)throw new Error("Не вдалося завантажити PDF у Storage: "+error.message);
-  const {data}=supabase.storage.from(ASSET_BUCKET).getPublicUrl(path);
+  if(error){
+    const detail=String(error.message||"Помилка Storage");
+    const hint=/bucket not found|not found|mime type|row-level security|permission|unauthorized|not allowed|invalid jwt|invalid bucket/i.test(detail)
+      ?" Перевір, чи застосовано supabase/pdf-rules-storage.sql у Supabase-проєкті AHLTV Tour."
+      :"";
+    throw new Error("PDF не завантажено: "+detail+"."+hint);
+  }
+  const {data}=supabase.storage.from(rulesBucket).getPublicUrl(path);
   return data.publicUrl;
 }
 
@@ -533,7 +540,7 @@ tournamentForm.addEventListener("submit",async e=>{
       cancelTournamentEdit.classList.remove("hidden");
       tournamentFormTitle.textContent="Редагувати турнір";
       await loadTournaments();
-      tournamentMessage.textContent="Дані турніру збережено, але файл логотипа або PDF не вдалося завантажити/прикріпити. Перевір файл і повтори збереження.";
+      tournamentMessage.textContent="Дані турніру збережено, але вкладення не додано: "+String(error?.message||"невідома помилка")+". Можна повторити спробу, не створюючи новий турнір.";
     }else{
       tournamentMessage.textContent=error?.message||"Не вдалося зберегти турнір.";
     }
