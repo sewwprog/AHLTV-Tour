@@ -276,16 +276,23 @@ async function loadTournament(){
     else if(event.key==="Tab"){event.preventDefault();bracketLightboxClose.focus()}
   });
 
-  const rules=(tournament.rules_text||"").trim();
-  rulesRoot.classList.toggle("is-empty",!rules);
-  rulesRoot.innerHTML=rules
-    ? rules.split(/\n{2,}/).map(block=>{
-        const lines=block.split(/\n/).map(line=>line.trim()).filter(Boolean);
-        const isList=lines.length>0&&lines.every(line=>/^([-*•]|\d+[.)])\s+/.test(line));
-        if(isList)return `<ul class="rules-list">${lines.map(line=>`<li>${esc(line.replace(/^([-*•]|\d+[.)])\s+/,""))}</li>`).join("")}</ul>`;
-        return `<p>${esc(block).replace(/\n/g,"<br>")}</p>`;
-      }).join("")
-    : '<div class="empty-state">Правила для цього турніру ще не додані.</div>';
+  const rulesLines=String(tournament.rules_text||"").split(/\r?\n/);
+  const rulesMarker="[AHLTV_RULES_PDF]";
+  const markerLine=rulesLines.find(line=>line.startsWith(rulesMarker))||"";
+  const pdfCandidate=markerLine.slice(rulesMarker.length).trim();
+  const allowedPdfPrefix="https://hfxzdifqcjbslmxffvlf.supabase.co/storage/v1/object/public/ahltv-assets/";
+  const pdfUrl=pdfCandidate.startsWith(allowedPdfPrefix)&&/^https:\/\//.test(pdfCandidate)?pdfCandidate:"";
+  const rules=rulesLines.filter(line=>!line.startsWith(rulesMarker)).join("\n").trim();
+  rulesRoot.classList.toggle("is-empty",!rules&&!pdfUrl);
+  const textHtml=rules.split(/\n{2,}/).map(block=>{
+    const lines=block.split(/\n/).map(line=>line.trim()).filter(Boolean);
+    const isList=lines.length>0&&lines.every(line=>/^([-*•]|\d+[.)])\s+/.test(line));
+    if(isList)return `<ul class="rules-list">${lines.map(line=>`<li>${esc(line.replace(/^([-*•]|\d+[.)])\s+/,""))}</li>`).join("")}</ul>`;
+    return `<p>${esc(block).replace(/\n/g,"<br>")}</p>`;
+  }).join("");
+  rulesRoot.innerHTML=(pdfUrl
+    ? `<div class="rules-pdf-public"><i data-lucide="file-text"></i><div><strong>Офіційні правила турніру</strong><small>Документ PDF</small></div><a class="primary-btn" target="_blank" rel="noopener noreferrer" href="${esc(pdfUrl)}"><i data-lucide="external-link"></i><span>Відкрити PDF</span></a></div>`
+    : "")+(rules?textHtml:pdfUrl?"":'<div class="empty-state">Правила для цього турніру ще не додані.</div>');
 
   window.refreshIcons?.();
   setupSectionNavigation();
